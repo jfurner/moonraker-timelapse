@@ -683,6 +683,7 @@ class Timelapse:
             # remove 0 byte files
             cmd = "find /tmp/timelapse -size 0 -delete"
             logging.info(f"Remove 0 byte files: {cmd}")
+            shell_cmd: SCMDComp = self.server.lookup_component('shell_command')
             scmd = shell_cmd.build_shell_command(cmd)
             try:
                 cmdstatus = await scmd.run(verbose=True,
