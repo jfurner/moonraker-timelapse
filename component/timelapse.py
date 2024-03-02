@@ -626,7 +626,7 @@ class Timelapse:
             # prepare output filename
             now = datetime.now()
             date_time = now.strftime(self.config['time_format_code'])
-            inputfiles = self.temp_dir + "frame%6d.jpg"
+            inputfiles = self.temp_dir + "*.jpg"
             outfile = f"timelapse_{gcodefilename}_{date_time}"
 
             # dublicate last frame
@@ -680,9 +680,22 @@ class Timelapse:
             elif self.config['flip_y']:
                 filterParam = " -vf 'vflip'"
 
+            # remove 0 byte files
+            cmd = "find /tmp/timelapse -size 0 -delete" \
+            logging.info(f"Remove 0 byte files: {cmd}")
+            scmd = shell_cmd.build_shell_command(cmd)
+            try:
+                cmdstatus = await scmd.run(verbose=True,
+                                            log_complete=False,
+                                            timeout=9999999999,
+                                            )
+            except Exception:
+                logging.exception(f"Error running cmd '{cmd}'")
+
             # build shell command
             cmd = self.ffmpeg_binary_path \
                 + " -r " + str(fps) \
+                + " -pattern_type glob" \
                 + " -i '" + inputfiles + "'" \
                 + filterParam \
                 + " -threads 2 -g 5" \
