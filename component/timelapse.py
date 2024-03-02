@@ -681,8 +681,8 @@ class Timelapse:
                 filterParam = " -vf 'vflip'"
 
             # remove 0 byte files
-            cmd = "find /tmp/timelapse -size 0 -delete" \
-            logging.info("Remove 0 byte files: {cmd}")
+            cmd = "find /tmp/timelapse -size 0 -delete"
+            logging.info(f"Remove 0 byte files: {cmd}")
             scmd = shell_cmd.build_shell_command(cmd)
             try:
                 cmdstatus = await scmd.run(verbose=True,
